@@ -37,7 +37,7 @@ public class Equip extends Action {
 		RSItem[] pickAxe = Inventory.find(pickaxeFilter);
 
 		if (pickAxe.length > 0 && pickAxe[0] != null) {
-			RSItemDefinition pickAxeDef = pickAxe[0].getDefinition();
+		final RSItemDefinition pickAxeDef = pickAxe[0].getDefinition();
 
 			if (pickAxeDef == null)
 				return;

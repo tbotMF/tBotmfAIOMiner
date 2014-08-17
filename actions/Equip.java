@@ -18,26 +18,22 @@ import scripts.sbf.util.MFUtil;
 
 public class Equip extends Action {
 	private final Filter<RSItem> pickaxeFilter = Filters.Items.nameNotEquals(
-			"Broken pickaxe","Pickaxe handle").combine(
+			"Broken pickaxe", "Pickaxe handle").combine(
 			Filters.Items.nameContains("pickaxe"), true);
 
-	@Override
-	public void execute() {
-		print("Equipping");
-		if (Banking.isBankScreenOpen())
-			if (Banking.close())
-				if (!Timing.waitCondition(new Condition() {
+	private boolean closeBank() {
+		return Banking.isBankScreenOpen() ? (Banking.close() ? Timing
+				.waitCondition(new Condition() {
 
 					@Override
 					public boolean active() {
 						return !Banking.isBankScreenOpen();
 					}
 
-				}, General.random(5000, 6000)))
-					return;
-		if (!MFUtil.switchTab(GameTab.TABS.INVENTORY))
-			return;
+				}, General.random(5000, 6000)) : false) : true;
+	}
 
+	private void equipAxe() {
 		RSItem[] pickAxe = Inventory.find(pickaxeFilter);
 
 		if (pickAxe.length > 0 && pickAxe[0] != null) {
@@ -47,17 +43,27 @@ public class Equip extends Action {
 				return;
 
 			if (pickAxe[0].click("W")) {
+				final RSItemDefinition pickAxeDefinition = pickAxe[0]
+						.getDefinition();
 				Timing.waitCondition(new Condition() {
 
 					@Override
 					public boolean active() {
 						General.sleep(100, 200);
-						return Equipment.isEquipped(pickAxeDef.getName());
+						return Equipment.isEquipped(pickAxeDefinition.getName());
 					}
 
-				}, General.random(1500,1800));
+				}, General.random(3000, 4000));
 			}
 		}
+	}
+
+	@Override
+	public void execute() {
+		print("Equipping");
+		if (closeBank())
+			if (MFUtil.switchTab(GameTab.TABS.INVENTORY))
+				equipAxe();
 
 	}
 

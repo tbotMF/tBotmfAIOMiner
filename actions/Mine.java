@@ -132,10 +132,9 @@ public class Mine extends Action {
 	private void hop() {
 		if (selections.get("Is mining rare").equals("yes"))
 			for (String rare : skillManager.getRareResourceList())
-				if (SkillGlobals.HOPPING.setStatus(skillManager
+			SkillGlobals.HOPPING.setStatus(skillManager
 						.getSkillResourceNameByModifiedColour(
-								colourOfRockToMine).equalsIgnoreCase(rare)))
-					return;
+								colourOfRockToMine).equalsIgnoreCase(rare));
 	}
 
 	private void dropRocks() {

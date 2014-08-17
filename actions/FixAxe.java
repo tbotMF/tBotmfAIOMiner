@@ -34,8 +34,6 @@ public class FixAxe extends Action {
 				if (Inventory.drop(Inventory.find(Filters.Items.nameContains(
 						"ore", "Clay"))) != 2)
 					return;
-			if (Inventory.isFull())
-				return;
 		}
 		if (Equipment.isEquipped(PICK_AXE_HANDLE)) {
 			if (MFUtil.switchTab(GameTab.TABS.EQUIPMENT)

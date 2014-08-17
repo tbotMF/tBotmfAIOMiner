@@ -108,15 +108,57 @@ public class Mine extends Action {
 			}, General.random(5000, 6000));
 	}
 
-	@Override
-	public void execute() {
-		print("Mining");
+	private void refreshRocks() {
 		if (rocks.isEmpty())
 			for (String rockName : availableOres)
 				rocks.add(oresMap.get(rockName));
+	}
 
-		if (!rocks.isEmpty())
-			colourOfRockToMine = rocks.get(0);
+	private void mineRocks(RSObject rock) {
+		while (Player.getAnimation() != -1) {
+			General.sleep(100, 200);
+			this.abc.doAllIdleActions(SKILLS.MINING, GameTab.TABS.INVENTORY);
+			if (checkLevelUp()) {
+				skillManager.updateCurrentLevel();
+				break;
+			}
+			if (detectSmokingRock(rock)) {
+				handleSmokingRock();
+				break;
+			}
+		}
+	}
+
+	private void hop() {
+		if (selections.get("Is mining rare").equals("yes"))
+			for (String rare : skillManager.getRareResourceList())
+				if (SkillGlobals.HOPPING.setStatus(skillManager
+						.getSkillResourceNameByModifiedColour(
+								colourOfRockToMine).equalsIgnoreCase(rare)))
+					return;
+	}
+
+	private void dropRocks() {
+		if (miningMethod.equals("Powermine")) {
+			switch (dropMethod) {
+			case "M1D1":
+				Inventory.drop(Inventory.getAll());
+				break;
+			case "Regular":
+				if (Inventory.isFull())
+					Inventory.drop(Inventory.getAll());
+
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void execute() {
+		print("Mining");
+		refreshRocks();
+
+		colourOfRockToMine = rocks.get(0);
 
 		if (colourOfRockToMine == null)
 			return;
@@ -131,41 +173,14 @@ public class Mine extends Action {
 						return;
 				if (!clickRock(rocksToMine[0]))
 					return;
-				while (Player.getAnimation() != -1) {
-					General.sleep(100, 200);
-					this.abc.doAllIdleActions(SKILLS.MINING,
-							GameTab.TABS.INVENTORY);
-					if (checkLevelUp()) {
-						skillManager.updateCurrentLevel();
-						break;
-					}
-					if (detectSmokingRock(rocksToMine[0])) {
-						handleSmokingRock();
-						break;
-					}
-				}
+				mineRocks(rocksToMine[0]);
 			}
 		} else {
-			if (selections.get("Is mining rare").equals("yes"))
-				for (String rare : skillManager.getRareResourceList())
-					if (SkillGlobals.HOPPING.setStatus(skillManager
-							.getSkillResourceNameByModifiedColour(
-									colourOfRockToMine).equalsIgnoreCase(rare)))
-						return;
+			hop();
 		}
 
-		if (miningMethod.equals("Powermine")) {
-			switch (dropMethod) {
-			case "M1D1":
-				Inventory.drop(Inventory.getAll());
-				break;
-			case "Regular":
-				if (Inventory.isFull())
-					Inventory.drop(Inventory.getAll());
+		dropRocks();
 
-				break;
-			}
-		}
 		if (Inventory.isFull())
 			rocks.poll();
 

@@ -43,14 +43,12 @@ public class Equip extends Action {
 				return;
 
 			if (pickAxe[0].click("W")) {
-				final RSItemDefinition pickAxeDefinition = pickAxe[0]
-						.getDefinition();
 				Timing.waitCondition(new Condition() {
 
 					@Override
 					public boolean active() {
 						General.sleep(100, 200);
-						return Equipment.isEquipped(pickAxeDefinition.getName());
+						return Equipment.isEquipped(pickAxeDef.getName());
 					}
 
 				}, General.random(3000, 4000));

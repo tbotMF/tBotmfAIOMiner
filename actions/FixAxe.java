@@ -46,7 +46,7 @@ public class FixAxe extends Action {
 					}
 				}, General.random(3000, 4000));
 		}
-		return false;
+		return true;
 
 	}
 
